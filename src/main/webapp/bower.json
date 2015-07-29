@@ -1,0 +1,22 @@
+{
+  "name": "Encoder",
+  "version": "0.0.0",
+  "authors": [
+    "Jiayu <yijiayu@gmail.com>"
+  ],
+  "main": "index.jsp",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#1.0.0",
+    "iron-elements": "PolymerElements/iron-elements#~1.0.3",
+    "paper-elements": "PolymerElements/paper-elements#~1.0.2",
+    "platinum-sw": "PolymerElements/platinum-sw#~1.0.2"
+  }
+}
