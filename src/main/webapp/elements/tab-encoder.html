@@ -39,7 +39,7 @@
                 if (plaintext) {
                     plaintext = plaintext.toLowerCase();
                     for (var i = 0, len = plaintext.length; i < len; i++) {
-                        var hit = plaintextKey.search(plaintext[i]);
+                        var hit = plaintextKey.indexOf(plaintext[i]);
                         if (hit == -1) {
                             ciphertext += plaintext[i];
                         } else if (hit == 26) {

@@ -20,8 +20,8 @@
     </template>
 
     <script>
-        var plaintextKey = "abcdefghijklmnopqrstuvwxyz ";
-        var ciphertextKey = "oespaporohpqenhscejaocolrkn mgotqqogoattu acib@@aoak";
+        var plaintextKey = "abcdefghilkjmnopqrstuvwxyz ";
+        var ciphertextKey = "oespaporohpqenhsceolocjarkn mgotqqogoattu acib@@aoak";
 
         // element registration
         Polymer({
@@ -41,11 +41,11 @@
                         if (ciphertext[i] === " " || ciphertext[i] === "n" || ciphertext[i] === "u") {
                             plaintext += ciphertext[i];
                         } else {
-                            var hit = ciphertextKey.search(ciphertext.slice(i, i+2));
+                            var hit = ciphertextKey.indexOf(ciphertext.slice(i, i+2));
                             if (hit % 2 === 0 && i != ciphertext.length - 1) {
                                 plaintext += plaintextKey[hit / 2];
                                 i++;
-                            } else if (hit == -1 && plaintextKey.search(ciphertext[i]) == -1) {
+                            } else if (hit == -1 && plaintextKey.indexOf(ciphertext[i]) == -1) {
                                 plaintext += ciphertext[i];
                             }
                         }
