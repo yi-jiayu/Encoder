@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="bower_components/font-roboto/roboto.html">
+    <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="bower_components/iron-pages/iron-pages.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+    <link rel="import" href="bower_components/paper-material/paper-material.html">
+    <link rel="import" href="bower_components/paper-input/paper-textarea.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
+    <link rel="import" href="bower_components/neon-animation/neon-animations.html">
+
+    <link rel="import" href="elements/neon-encoder.html">
+    <link rel="import" href="elements/neon-decoder.html">
+
+    <style>
+
+        body {
+            font-family: Roboto, sans-serif;
+        }
+
+        .card {
+            width: 60%;
+            display: block;
+            margin-top: 32px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 16px 32px 64px;
+        }
+
+        .button {
+            float: right;
+            background: blue;
+            color: white;
+            font-size: smaller;
+            margin-top: 8px;
+        }
+    </style>
+
+    <title>Encoder</title>
+</head>
+<body class="fullbleed layout vertical">
+<template is="dom-bind">
+    <paper-header-panel class="flex">
+        <paper-toolbar class="medium-tall">
+            <div><h3>Encoder</h3></div>
+            <div class="bottom fit" id="tab-div" selected-tab="{{selectedTab}}">
+                <paper-tabs selected="[[selectedTab]]" id="tabs">
+                    <paper-tab id="encode-tab" on-click="goToEncode">Encode</paper-tab>
+                    <paper-tab id="decode-tab" on-click="goToDecode">Decode</paper-tab>
+                    <paper-tab id="about-tab" on-click="goToAbout">About</paper-tab>
+                </paper-tabs>
+            </div>
+        </paper-toolbar>
+        <div>
+            <neon-animated-pages selected="[[selectedTab]]" entry-animation="[[entryAnimation]]"
+                                 exit-animation="[[exitAnimation]]">
+                <div>
+                    <neon-encoder></neon-encoder>
+                </div>
+                <div>
+                    <neon-decoder></neon-decoder>
+                </div>
+                <div>
+                    <paper-material elevation="1" class="card">
+                        <div><h1>Encoder</h1></div>
+                    </paper-material>
+                </div>
+            </neon-animated-pages>
+
+        </div>
+    </paper-header-panel>
+</template>
+
+<script>
+    var scope = document.querySelector('template[is="dom-bind"]');
+
+    // To ensure that elements are ready on polyfilled browsers,
+    // wait for WebComponentsReady.
+    document.addEventListener('WebComponentsReady', function () {
+        scope.selectedTab = "0";
+    });
+
+    scope.goToEncode = function () {
+        if (scope.selectedTab != 0) {
+            slideLeft();
+            scope.selectedTab = 0;
+        }
+    };
+
+    scope.goToDecode = function () {
+        if (scope.selectedTab != 1) {
+            if (scope.selectedTab === 2) {
+                slideLeft();
+            } else {
+                slideRight();
+            }
+            scope.selectedTab = 1;
+        }
+    };
+
+    scope.goToAbout = function () {
+        if (scope.selectedTab != 2) {
+            slideRight();
+            scope.selectedTab = 2;
+        }
+    };
+
+    function slideLeft() {
+        scope.entryAnimation = "slide-from-right-animation";
+        scope.exitAnimation = "slide-left-animation";
+    }
+
+    function slideRight() {
+        scope.entryAnimation = "slide-from-left-animation";
+        scope.exitAnimation = "slide-right-animation";
+    }
+</script>
+</body>
+</html>

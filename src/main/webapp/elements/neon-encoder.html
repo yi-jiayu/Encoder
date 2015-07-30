@@ -1,0 +1,76 @@
+<dom-module id="neon-encoder">
+
+    <template>
+        <paper-material elevation="1" class="card">
+            <div>
+                <paper-textarea label="Neon plaintext" id="encoder-input" value="{{plaintext}}"></paper-textarea>
+            </div>
+            <div>
+                <paper-button id="encoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR</paper-button>
+            </div>
+        </paper-material>
+        <paper-material elevation="1" class="card">
+            <div>
+                <paper-textarea label="Ciphertext" id="encoder-output" value="[[encode(plaintext)]]"></paper-textarea>
+            </div>
+            <div>
+                <paper-button id="encoder-output-copy" raised="true" class="button" on-click="copyEncoderOutput">COPY</paper-button>
+            </div>
+        </paper-material>
+    </template>
+
+    <script>
+        var plaintextKey = "abcdefghijklmnopqrstuvwxyz ";
+        var ciphertextKey = "oespaporohpqenhscejaocolrkn mgotqqogoattu acib@@aoak";
+
+        // element registration
+        Polymer({
+            is: "neon-encoder",
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ],
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                plaintext: String
+            },
+
+            encode: function(plaintext) {
+                var ciphertext = "";
+
+                if (plaintext) {
+                    plaintext = plaintext.toLowerCase();
+                    for (var i = 0, len = plaintext.length; i < len; i++) {
+                        var hit = plaintextKey.indexOf(plaintext[i]);
+                        if (hit == -1) {
+                            ciphertext += plaintext[i];
+                        } else if (hit == 26) {
+                            ciphertext += " ";
+                        } else {
+                            hit = hit * 2;
+                            ciphertext += ciphertextKey.slice(hit, hit + 2).trim();
+                        }
+                    }
+                    return ciphertext.trim();
+                } else {
+                    return null;
+                }
+            },
+
+            clearInput: function() {
+                this.$$("#encoder-input").value = null;
+            },
+
+            copyEncoderOutput: function() {
+                var aux = document.createElement("input");
+                aux.setAttribute("value", this.$$("#encoder-output").value);
+                document.body.appendChild(aux);
+                aux.select();
+                document.execCommand("copy");
+                document.body.removeChild(aux);
+            }
+        });
+    </script>
+</dom-module>
