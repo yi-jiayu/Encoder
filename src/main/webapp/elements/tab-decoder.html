@@ -5,8 +5,11 @@
             <div>
                 <paper-textarea label="Ciphertext" id="decoder-input" value="{{ciphertext}}"></paper-textarea>
             </div>
+            <div>
+                <paper-button id="decoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR</paper-button>
+            </div>
         </paper-material>
-        <paper-material elevation="1" class="card" style="padding-bottom: 64px;">
+        <paper-material elevation="1" class="card">
             <div>
                 <paper-textarea label="Plaintext" id="decoder-output" value="[[decode(ciphertext)]]"></paper-textarea>
             </div>
@@ -17,7 +20,9 @@
     </template>
 
     <script>
-        var decoderOutput = "";
+        var plaintextKey = "abcdefghijklmnopqrstuvwxyz ";
+        var ciphertextKey = "oespaporohpqenhscejaocolrkn mgotqqogoattu acib@@aoak";
+
         // element registration
         Polymer({
             is: "tab-decoder",
@@ -29,59 +34,40 @@
             },
 
             decode: function (ciphertext) {
-                return decode(ciphertext);
+                var plaintext = "";
+                if (ciphertext) {
+                    ciphertext = ciphertext.toLowerCase();
+                    for (var i = 0, len = ciphertext.length; i < len; i++) {
+                        if (ciphertext[i] === " " || ciphertext[i] === "n" || ciphertext[i] === "u") {
+                            plaintext += ciphertext[i];
+                        } else {
+                            var hit = ciphertextKey.search(ciphertext.slice(i, i+2));
+                            if (hit % 2 === 0 && i != ciphertext.length - 1) {
+                                plaintext += plaintextKey[hit / 2];
+                                i++;
+                            } else if (hit == -1 && plaintextKey.search(ciphertext[i]) == -1) {
+                                plaintext += ciphertext[i];
+                            }
+                        }
+                    }
+                    return plaintext.trim();
+                } else {
+                    return null;
+                }
+            },
+
+            clearInput: function() {
+                this.$$("#decoder-input").value = null;
             },
 
             copyDecoderOutput: function() {
-                // create a "hidden" input
                 var aux = document.createElement("input");
-
-                // assign it the value of the specified element
-                aux.setAttribute("value", decoderOutput);
-
-                // append it to the body
+                aux.setAttribute("value", this.$$("#decoder-output").value);
                 document.body.appendChild(aux);
-
-                // highlight its content
                 aux.select();
-
-                // copy the highlighted text
                 document.execCommand("copy");
-
-                // remove it from the body
                 document.body.removeChild(aux);
             }
         });
-
-        function decode(ciphertext) {
-            var plaintextKey = "abcdefghijklmnopqrstuvwxyz ";
-            var ciphertextKey = "oespaporohpqenhscejaftolrkn mgotqqogoattu acib@@aoak";
-            var plaintext = "";
-
-            if (ciphertext) {
-                ciphertext = ciphertext.toLowerCase();
-                for (var i = 0, len = ciphertext.length; i < len; i++) {
-                    switch (ciphertext[i]) {
-                        case " ":
-                        case "n":
-                        case "u":
-                            plaintext += ciphertext[i];
-                            break;
-                        default:
-                                var hit = ciphertextKey.search(ciphertext.slice(i, i+2));
-                                if (hit % 2 === 0 && i != ciphertext.length-1) {
-                                    plaintext += plaintextKey[hit/2];
-                                    i++;
-                                } else if (hit == -1 && plaintextKey.search(ciphertext[i]) == -1) {
-                                    plaintext += ciphertext[i];
-                                }
-                    }
-                }
-                decoderOutput = plaintext.trim();
-                return decoderOutput;
-            } else {
-                return "";
-            }
-        }
     </script>
 </dom-module>

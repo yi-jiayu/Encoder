@@ -14,7 +14,6 @@
     <link rel="import" href="bower_components/paper-material/paper-material.html">
     <link rel="import" href="bower_components/paper-input/paper-textarea.html">
     <link rel="import" href="bower_components/paper-button/paper-button.html">
-    <link rel="import" href="bower_components/platinum-sw/platinum-sw-elements.html">
 
     <link rel="import" href="elements/tab-encoder.html">
     <link rel="import" href="elements/tab-decoder.html">
@@ -31,7 +30,7 @@
             margin-top: 32px;
             margin-left: auto;
             margin-right: auto;
-            padding: 16px 32px 16px;
+            padding: 16px 32px 64px;
         }
 
         .button {
@@ -46,13 +45,10 @@
     <title>Encoder</title>
 </head>
 <body class="fullbleed layout vertical">
-<platinum-sw-register auto-register>
-    <platinum-sw-cache></platinum-sw-cache>
-</platinum-sw-register>
 <template is="dom-bind">
     <paper-header-panel class="flex">
         <paper-toolbar class="medium-tall">
-            <div>Encoder</div>
+            <div><h3>Encoder</h3></div>
             <div class="bottom fit">
                 <paper-tabs selected="{{selectedTab}}" id="tabs">
                     <paper-tab name="encode">Encode</paper-tab>
