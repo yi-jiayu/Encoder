@@ -14,9 +14,11 @@
     <link rel="import" href="bower_components/paper-material/paper-material.html">
     <link rel="import" href="bower_components/paper-input/paper-textarea.html">
     <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
+    <link rel="import" href="bower_components/neon-animation/neon-animations.html">
 
-    <link rel="import" href="elements/tab-encoder.html">
-    <link rel="import" href="elements/tab-decoder.html">
+    <link rel="import" href="elements/neon-encoder.html">
+    <link rel="import" href="elements/neon-decoder.html">
 
     <style>
 
@@ -49,41 +51,99 @@
     <paper-header-panel class="flex">
         <paper-toolbar class="medium-tall">
             <div><h3>Encoder</h3></div>
-            <div class="bottom fit">
-                <paper-tabs selected="{{selectedTab}}" id="tabs">
-                    <paper-tab name="encode">Encode</paper-tab>
-                    <paper-tab name="decode">Decode</paper-tab>
-                    <paper-tab name="about">About</paper-tab>
+            <div class="bottom fit" id="tab-div" selected-tab="{{selectedTab}}">
+                <paper-tabs selected="[[selectedTab]]" id="tabs">
+                    <paper-tab id="encode-tab" on-click="goToEncode">Encode</paper-tab>
+                    <paper-tab id="decode-tab" on-click="goToDecode">Decode</paper-tab>
+                    <paper-tab id="about-tab" on-click="goToAbout">About</paper-tab>
                 </paper-tabs>
             </div>
         </paper-toolbar>
         <div>
-            <iron-pages selected="{{selectedTab}}">
-                <div>
-                    <tab-encoder></tab-encoder>
+            <neon-animated-pages selected="[[selectedTab]]" entry-animation="[[entryAnimation]]"
+                                 exit-animation="[[exitAnimation]]">
+                <div on-track="encodeTrack">
+                    <neon-encoder></neon-encoder>
                 </div>
-                <div>
-                    <tab-decoder></tab-decoder>
+                <div on-track="decodeTrack">
+                    <neon-decoder></neon-decoder>
                 </div>
-                <div>
+                <div on-track="aboutTrack">
                     <paper-material elevation="1" class="card">
                         <div><h1>Encoder</h1></div>
+                        <div>v 1.0.3</div>
                     </paper-material>
                 </div>
-            </iron-pages>
+            </neon-animated-pages>
 
         </div>
     </paper-header-panel>
 </template>
 
 <script>
+    var scope = document.querySelector('template[is="dom-bind"]');
+
     // To ensure that elements are ready on polyfilled browsers,
     // wait for WebComponentsReady.
     document.addEventListener('WebComponentsReady', function () {
-        var tabs = document.querySelector("#tabs");
-        tabs.selected = "0";
-
+        scope.selectedTab = "0";
     });
-</script>
+
+    scope.goToAbout = function () {
+        if (scope.selectedTab != 0) {
+            scope.entryAnimation = "slide-from-right-animation";
+            scope.exitAnimation = "slide-left-animation";
+            scope.selectedTab = 2;
+        }
+    };
+
+    scope.goToDecode = function () {
+        if (scope.selectedTab != 1) {
+            if (scope.selectedTab === 0) {
+                scope.entryAnimation = "slide-from-right-animation";
+                scope.exitAnimation = "slide-left-animation";
+            } else {
+                scope.entryAnimation = "slide-from-left-animation";
+                scope.exitAnimation = "slide-right-animation";
+            }
+            scope.selectedTab = 1;
+        }
+    };
+
+    scope.goToEncode = function () {
+        if (scope.selectedTab != 2) {
+            scope.entryAnimation = "slide-from-left-animation";
+            scope.exitAnimation = "slide-right-animation";
+            scope.selectedTab = 0;
+        }
+    };
+
+    scope.encodeTrack = function(e) {
+        if (e.detail.state == "end") {
+            if (e.detail.dx > 200) {
+                scope.goToDecode();
+            }
+        }
+    };
+
+    scope.decodeTrack = function(e) {
+        if (e.detail.state == "end") {
+            if (e.detail.dx > 200) {
+                scope.goToAbout();
+            } else if (e.detail.dx < -200) {
+                scope.goToEncode();
+            }
+        }
+
+    };
+
+    scope.aboutTrack = function(e) {
+        if (e.detail.state == "end") {
+            if (e.detail.dx < -200) {
+                scope.goToDecode();
+            }
+        }
+    }
+    </script>
 </body>
 </html>
