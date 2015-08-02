@@ -8,16 +8,22 @@
             <div>
                 <paper-textarea label="Plaintext" id="encoder-input" value="{{plaintext}}"></paper-textarea>
             </div>
-            <div>
-                <paper-button id="encoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR</paper-button>
+            <div class="layout horizontal end-justified">
+                <span>{{voiceRecognitionStatus}}</span>
+                <paper-button id="encoder-input-speech" raised="true" disabled$="[[speechDisabled]]" class="button"
+                              on-click="recogniseSpeech">SPEECH
+                </paper-button>
+                <paper-button id="encoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR
+                </paper-button>
             </div>
         </paper-material>
         <paper-material elevation="1" class="card">
             <div>
                 <paper-textarea label="Ciphertext" id="encoder-output" value="[[encode(plaintext)]]"></paper-textarea>
             </div>
-            <div>
-                <paper-button id="encoder-output-copy" raised="true" class="button" on-click="copyEncoderOutput">COPY</paper-button>
+            <div class="layout horizontal end-justified">
+                <paper-button id="encoder-output-copy" raised="true" class="button" on-click="copyEncoderOutput">COPY
+                </paper-button>
             </div>
         </paper-material>
     </template>
@@ -25,6 +31,9 @@
     <script>
         var plaintextKey = "abcdefghijklmnopqrstuvwxyz ";
         var ciphertextKey = "oespaporohpqenhscejaocolrkn mgotqqogoattu acib@@aoak";
+        var recogniser;
+        var transcription;
+        var recognising = false;
 
         // element registration
         Polymer({
@@ -37,10 +46,48 @@
             // add properties and methods on the element's prototype
             properties: {
                 // declare properties for the element's public API
-                plaintext: String
+                plaintext: String,
+                voiceRecognitionStatus: String,
+                speechDisabled: Boolean
             },
 
-            encode: function(plaintext) {
+            ready: function () {
+                window.SpeechRecognition = window.SpeechRecognition ||
+                        window.webkitSpeechRecognition ||
+                        null;
+
+                if (window.SpeechRecognition === null) {
+                    this.speechDisabled = true;
+                } else {
+                    this.speechDisabled = false;
+                    recogniser = new window.SpeechRecognition();
+                    recogniser.interimResults = true;
+                    transcription = this.$$("#encoder-input");
+
+                    recogniser.onstart = function () {
+                        console.log("hello");
+                        recognising = true;
+                    };
+
+                    recogniser.onend = function () {
+                        console.log("byebye");
+                        recognising = false;
+                    };
+
+                    recogniser.onerror = function (event) {
+                        console.log(event.message);
+                    };
+
+                    recogniser.onresult = function (event) {
+                        for (var i = event.resultIndex; i < event.results.length; i++) {
+                                transcription.value = event.results[i][0].transcript;
+                        }
+                    }
+                }
+
+            },
+
+            encode: function (plaintext) {
                 var ciphertext = "";
 
                 if (plaintext) {
@@ -62,17 +109,27 @@
                 }
             },
 
-            clearInput: function() {
+            clearInput: function () {
                 this.$$("#encoder-input").value = null;
             },
 
-            copyEncoderOutput: function() {
+            copyEncoderOutput: function () {
                 var aux = document.createElement("input");
                 aux.setAttribute("value", this.$$("#encoder-output").value);
                 document.body.appendChild(aux);
                 aux.select();
                 document.execCommand("copy");
                 document.body.removeChild(aux);
+            },
+
+            recogniseSpeech: function () {
+                this.clearInput();
+                if (recogniser) {
+                    if (recognising) {
+                        recogniser.stop();
+                    }
+                    recogniser.start();
+                }
             }
         });
     </script>

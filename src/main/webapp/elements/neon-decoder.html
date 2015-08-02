@@ -8,16 +8,18 @@
             <div>
                 <paper-textarea label="Ciphertext" id="decoder-input" value="{{ciphertext}}"></paper-textarea>
             </div>
-            <div>
-                <paper-button id="decoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR</paper-button>
+            <div class="layout horizontal end-justified">
+                <paper-button id="decoder-output-clear" raised="true" class="button" on-click="clearInput">CLEAR
+                </paper-button>
             </div>
         </paper-material>
         <paper-material elevation="1" class="card">
             <div>
                 <paper-textarea label="Plaintext" id="decoder-output" value="[[decode(ciphertext)]]"></paper-textarea>
             </div>
-            <div>
-                <paper-button id="decoder-output-copy" raised="true" class="button" on-click="copyDecoderOutput">COPY</paper-button>
+            <div class="layout horizontal end-justified">
+                <paper-button id="decoder-output-copy" raised="true" class="button" on-click="copyDecoderOutput">COPY
+                </paper-button>
             </div>
         </paper-material>
     </template>
@@ -37,7 +39,7 @@
             // add properties and methods on the element's prototype
             properties: {
                 // declare properties for the element's public API
-                ciphertext: String
+                ciphertext: String,
             },
 
             decode: function (ciphertext) {
@@ -48,7 +50,7 @@
                         if (ciphertext[i] === " " || ciphertext[i] === "n" || ciphertext[i] === "u") {
                             plaintext += ciphertext[i];
                         } else {
-                            var hit = ciphertextKey.indexOf(ciphertext.slice(i, i+2));
+                            var hit = ciphertextKey.indexOf(ciphertext.slice(i, i + 2));
                             if (hit % 2 === 0 && i != ciphertext.length - 1) {
                                 plaintext += plaintextKey[hit / 2];
                                 i++;
@@ -63,11 +65,11 @@
                 }
             },
 
-            clearInput: function() {
+            clearInput: function () {
                 this.$$("#decoder-input").value = null;
             },
 
-            copyDecoderOutput: function() {
+            copyDecoderOutput: function () {
                 var aux = document.createElement("input");
                 aux.setAttribute("value", this.$$("#decoder-output").value);
                 document.body.appendChild(aux);
