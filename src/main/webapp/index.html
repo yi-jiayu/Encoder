@@ -82,6 +82,7 @@
 
 <script>
     var scope = document.querySelector('template[is="dom-bind"]');
+    var trackThreshold = 100;
 
     // To ensure that elements are ready on polyfilled browsers,
     // wait for WebComponentsReady.
@@ -90,7 +91,7 @@
     });
 
     scope.goToAbout = function () {
-        if (scope.selectedTab != 0) {
+        if (scope.selectedTab != 2) {
             scope.entryAnimation = "slide-from-right-animation";
             scope.exitAnimation = "slide-left-animation";
             scope.selectedTab = 2;
@@ -99,7 +100,7 @@
 
     scope.goToDecode = function () {
         if (scope.selectedTab != 1) {
-            if (scope.selectedTab === 0) {
+            if (scope.selectedTab == 0) {
                 scope.entryAnimation = "slide-from-right-animation";
                 scope.exitAnimation = "slide-left-animation";
             } else {
@@ -111,7 +112,7 @@
     };
 
     scope.goToEncode = function () {
-        if (scope.selectedTab != 2) {
+        if (scope.selectedTab != 0) {
             scope.entryAnimation = "slide-from-left-animation";
             scope.exitAnimation = "slide-right-animation";
             scope.selectedTab = 0;
@@ -120,7 +121,7 @@
 
     scope.encodeTrack = function(e) {
         if (e.detail.state == "end") {
-            if (e.detail.dx > 200) {
+            if (e.detail.dx < -1 * trackThreshold) {
                 scope.goToDecode();
             }
         }
@@ -128,9 +129,9 @@
 
     scope.decodeTrack = function(e) {
         if (e.detail.state == "end") {
-            if (e.detail.dx > 200) {
+            if (e.detail.dx < -1 * trackThreshold) {
                 scope.goToAbout();
-            } else if (e.detail.dx < -200) {
+            } else if (e.detail.dx > trackThreshold) {
                 scope.goToEncode();
             }
         }
@@ -139,7 +140,7 @@
 
     scope.aboutTrack = function(e) {
         if (e.detail.state == "end") {
-            if (e.detail.dx < -200) {
+            if (e.detail.dx > trackThreshold) {
                 scope.goToDecode();
             }
         }
